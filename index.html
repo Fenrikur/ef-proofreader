@@ -82,16 +82,19 @@
                 </div>
 					</div>
                 <div class="card-body">
-                    <h6>Title:</h6>
+						<h6>Title: <button id="base-title-copy" type="button" class="btn btn-light btn-sm">Copy</button>
+						</h6>
                     <h6 id="base-title" class="card-title form-control"></h6>
                     <p class="card-text">
                         <small id="base-subtitle" class="text-muted"></small>
                     </p>
-                    <h6>Abstract:</h6>
+						<h6>Abstract: <button id="base-abstract-copy" type="button"
+								class="btn btn-light btn-sm">Copy</button></h6>
                     <p class="card-text">
                         <span id="base-abstract" class="form-control"></span>
                     </p>
-                    <h6>Description:</h6>
+						<h6>Description: <button id="base-copy" type="button" class="btn btn-light btn-sm">Copy</button>
+						</h6>
                     <p class="card-text">
                         <span id="base" class="form-control"></span>
                     </p>
@@ -121,7 +124,8 @@
 							</div>
                     </div>
                     <div class="card-body">
-                        <h6>Title:</h6>
+							<h6>Title: <button id="workingcopy-title-copy" type="button"
+									class="btn btn-light btn-sm">Copy</button></h6>
                         <div id="workingcopy-title-container" class="textarea-container">
                             <textarea id="workingcopy-title" class="form-control"></textarea>
                             <div id="workingcopy-title-size" class="form-control textarea-size"></div>
@@ -130,13 +134,15 @@
                         <!--<h6>Subtitle:</h6>
                         <input id="workingcopy-subtitle" class="form-control text-muted w-100"/>
                         <p></p>-->
-                        <h6>Abstract:</h6>
+							<h6>Abstract: <button id="workingcopy-abstract-copy" type="button"
+									class="btn btn-light btn-sm">Copy</button></h6>
                         <div id="workingcopy-abstract-container" class="textarea-container">
                             <textarea id="workingcopy-abstract" class="form-control"></textarea>
                             <div id="workingcopy-abstract-size" class="form-control textarea-size"></div>
                         </div>
                         <p></p>
-                        <h6>Description:</h6>
+							<h6>Description: <button id="workingcopy-copy" type="button"
+									class="btn btn-light btn-sm">Copy</button></h6>
                         <div id="workingcopy-container" class="textarea-container">
                             <textarea id="workingcopy" class="form-control"></textarea>
                             <div id="workingcopy-size" class="form-control textarea-size"></div>
@@ -166,16 +172,19 @@
                 </div>
 					</div>
                 <div class="card-body">
-                    <h6>Title:</h6>
+						<h6>Title: <button id="remote-title-copy" type="button"
+								class="btn btn-light btn-sm">Copy</button></h6>
                     <h6 id="remote-title" class="card-title form-control"></h6>
                     <p class="card-text">
                         <small id="remote-subtitle" class="text-muted"></small>
                     </p>
-                    <h6>Abstract:</h6>
+						<h6>Abstract: <button id="remote-abstract-copy" type="button"
+								class="btn btn-light btn-sm">Copy</button></h6>
                     <p class="card-text">
                         <span id="remote-abstract" class="form-control"></span>
                     </p>
-                    <h6>Description:</h6>
+						<h6>Description: <button id="remote-copy" type="button"
+								class="btn btn-light btn-sm">Copy</button></h6>
                     <p class="card-text">
                         <span id="remote" class="form-control"></span>
                     </p>
@@ -235,6 +244,15 @@
 		let buttonFirst = document.getElementById('btn-first'),
 			buttonPrevious = document.getElementById('btn-previous'),
 			buttonNext = document.getElementById('btn-next');
+		let baseTitleCopy = document.getElementById('base-title-copy'),
+			baseAbstractCopy = document.getElementById('base-abstract-copy'),
+			baseCopy = document.getElementById('base-copy');
+		let workingCopyTitleCopy = document.getElementById('workingcopy-title-copy'),
+			workingCopyAbstractCopy = document.getElementById('workingcopy-abstract-copy'),
+			workingCopyCopy = document.getElementById('workingcopy-copy');
+		let remoteTitleCopy = document.getElementById('remote-title-copy'),
+			remoteAbstractCopy = document.getElementById('remote-abstract-copy'),
+			remoteCopy = document.getElementById('remote-copy');
 
     let eventIds = [];
     let events = [];
@@ -583,6 +601,27 @@
 			eventChanged();
 		}
 
+		function copyEventDataToClipboard(file, field) {
+			let eventId = eventsElement.value;
+			let eventData = events[eventId];
+			let text = eventData[file][field];
+			if (text) {
+				copyToClipboard(text);
+			}
+		}
+
+		function copyToClipboard(text) {
+			if (navigator.clipboard) {
+				navigator.clipboard.writeText(text).then(() => {
+					console.log('Copied to clipboard successfully.');
+				}, (err) => {
+					console.log('Failed to copy the text to clipboard.', err);
+				});
+			} else if (window.clipboardData) {
+				window.clipboardData.setData("Text", text);
+			}
+		}
+
     eventsElement.onchange = eventChanged;
     workingCopyElement.onkeyup = updateDiffs;
     workingCopyTitleElement.onkeyup = updateDiffs;
@@ -597,6 +636,16 @@
 		buttonFirst.onclick = firstEvent;
 		buttonPrevious.onclick = previousEvent;
 		buttonNext.onclick = nextEvent;
+
+		baseTitleCopy.onclick = copyEventDataToClipboard.bind(null, 'base', 'title');
+		baseAbstractCopy.onclick = copyEventDataToClipboard.bind(null, 'base', 'abstract');
+		baseCopy.onclick = copyEventDataToClipboard.bind(null, 'base', 'description');
+		workingCopyTitleCopy.onclick = copyEventDataToClipboard.bind(null, 'workingCopy', 'title');
+		workingCopyAbstractCopy.onclick = copyEventDataToClipboard.bind(null, 'workingCopy', 'abstract');
+		workingCopyCopy.onclick = copyEventDataToClipboard.bind(null, 'workingCopy', 'description');
+		remoteTitleCopy.onclick = copyEventDataToClipboard.bind(null, 'remote', 'title');
+		remoteAbstractCopy.onclick = copyEventDataToClipboard.bind(null, 'remote', 'abstract');
+		remoteCopy.onclick = copyEventDataToClipboard.bind(null, 'remote', 'description');
 
     document.onkeydown = function (event) {
         if (eventIds.size === 0) {
