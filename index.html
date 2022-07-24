@@ -46,6 +46,9 @@
 <div class="container-fluid">
 		<div class="header pt-3 pb-2">
         <form class="form-inline justify-content-center">
+				<button id="btn-first" class="btn btn-light" type="button">⇤</button>
+				<button id="btn-previous" class="btn btn-light" type="button">←</button>
+				<button id="btn-next" class="btn btn-light" type="button">→</button>
 				<label for="events" class="mr-1 ml-1">Event:</label>
 				<select id="events" class="form-control custom-select mr-2"></select>
 				<div class="flex">
@@ -229,6 +232,9 @@
     let baseNotesElement = document.getElementById('base-notes'),
         workingCopyNotesElement = document.getElementById('workingcopy-notes'),
         remoteNotesElement = document.getElementById('remote-notes');
+		let buttonFirst = document.getElementById('btn-first'),
+			buttonPrevious = document.getElementById('btn-previous'),
+			buttonNext = document.getElementById('btn-next');
 
     let eventIds = [];
     let events = [];
@@ -559,6 +565,24 @@
         document.body.removeChild(element);
     }
 
+		function firstEvent() {
+			let currentIndex = eventsElement.selectedIndex;
+			eventsElement.selectedIndex = 0;
+			eventChanged();
+		}
+
+		function previousEvent() {
+			let currentIndex = eventsElement.selectedIndex;
+			eventsElement.selectedIndex = currentIndex - 1 < 0 ? eventsElement.options.length - 1 : currentIndex - 1;
+			eventChanged();
+		}
+
+		function nextEvent() {
+			let currentIndex = eventsElement.selectedIndex;
+			eventsElement.selectedIndex = currentIndex + 1 === eventsElement.options.length ? 0 : currentIndex + 1;
+			eventChanged();
+		}
+
     eventsElement.onchange = eventChanged;
     workingCopyElement.onkeyup = updateDiffs;
     workingCopyTitleElement.onkeyup = updateDiffs;
@@ -569,6 +593,10 @@
     workingCopyElement.oninput = autoSize;
     workingCopyAbstractElement.oninput = autoSize;
     workingCopyNotesElement.oninput = autoSize;
+
+		buttonFirst.onclick = firstEvent;
+		buttonPrevious.onclick = previousEvent;
+		buttonNext.onclick = nextEvent;
 
     document.onkeydown = function (event) {
         if (eventIds.size === 0) {
@@ -587,21 +615,18 @@
             keyCode = event.keyCode;
         }
 
-        let currentIndex = eventsElement.selectedIndex;
         switch (keyCode) {
             case 0:
             case 'Space':
                 if (event.ctrlKey) {
-                    eventsElement.selectedIndex = currentIndex + 1 === eventsElement.options.length ? 0 : currentIndex + 1;
-                    eventChanged();
+						nextEvent();
                 }
             case 38:
             case 'ArrowUp':
             case 39:
             case 'ArrowRight':
                 if (event.ctrlKey && event.altKey) {
-                    eventsElement.selectedIndex = currentIndex + 1 === eventsElement.options.length ? 0 : currentIndex + 1;
-                    eventChanged();
+						nextEvent();
                 }
                 break;
             case 40:
@@ -609,8 +634,7 @@
             case 37:
             case 'ArrowLeft':
                 if (event.ctrlKey && event.altKey) {
-                    eventsElement.selectedIndex = currentIndex - 1 < 0 ? eventsElement.options.length - 1 : currentIndex - 1;
-                    eventChanged();
+						previousEvent();
                 }
                 break;
         }
