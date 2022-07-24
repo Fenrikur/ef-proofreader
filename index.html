@@ -269,11 +269,15 @@
         for (let row in csv) {
             let event = csv[row];
             let eventId = event.event_id;
-            events[eventId] = {'base': event, 'workingCopy': Object.assign({}, event), 'remote': null};
+				if (typeof events[eventId] !== 'undefined') {
+					events[eventId].base = event;
+				} else {
+					events[eventId] = { 'base': event, 'workingCopy': Object.assign({}, event), 'remote': null };
             eventIds.push(eventId);
             console.log('Adding event from base:', eventId);
         }
     }
+		}
 
     function processRemote(data) {
         let csv = $.csv.toObjects(data);
@@ -283,7 +287,7 @@
             if (typeof events[eventId] !== 'undefined') {
                 events[eventId].remote = event;
             } else {
-                events[eventId] = {'base': null, 'workingCopy': Object.assign({}, event), 'remote': event};
+					events[eventId] = { 'base': null, 'workingCopy': Object.assign({}, event), 'remote': event };
                 eventIds.push(eventId);
                 console.log('Adding event from remote:', eventId);
             }
@@ -298,7 +302,7 @@
             if (typeof events[eventId] !== 'undefined') {
                 events[eventId].workingCopy = event;
             } else {
-                events[eventId] = {'base': null, 'workingCopy': event, 'remote': null};
+					events[eventId] = { 'base': null, 'workingCopy': event, 'remote': null };
                 eventIds.push(eventId);
                 console.log('Adding event from working copy:', eventId);
             }
@@ -370,13 +374,15 @@
         let baseData = localStorage.getItem(localStorageKeyBase);
         if (baseData) {
             processBase(baseData);
-            baseUrlElement.innerHTML = localStorage.getItem(localStorageKeyBaseName);
+				baseUrlElement.innerText = localStorage.getItem(localStorageKeyBaseName);
+				baseUrlElement.setAttribute('title', localStorage.getItem(localStorageKeyBaseName));
         }
 
         let remoteData = localStorage.getItem(localStorageKeyRemote);
         if (remoteData) {
             processRemote(remoteData);
-            remoteUrlElement.innerHTML = localStorage.getItem(localStorageKeyRemoteName);
+				remoteUrlElement.innerText = localStorage.getItem(localStorageKeyRemoteName);
+				remoteUrlElement.setAttribute('title', localStorage.getItem(localStorageKeyRemoteName));
         }
 
         let workingCopyData = localStorage.getItem(localStorageKeyWorkingCopy);
@@ -440,10 +446,10 @@
         workingCopyAbstractElement.value = eventData.workingCopy.abstract;
         workingCopyNotesElement.value = eventData.workingCopy.notes || "";
 
-        autoSize({'target': workingCopyTitleElement});
-        autoSize({'target': workingCopyElement});
-        autoSize({'target': workingCopyAbstractElement});
-        autoSize({'target': workingCopyNotesElement});
+			autoSize({ 'target': workingCopyTitleElement });
+			autoSize({ 'target': workingCopyElement });
+			autoSize({ 'target': workingCopyAbstractElement });
+			autoSize({ 'target': workingCopyNotesElement });
 
         localStorage.setItem(localStorageKeyLastViewedEventId, eventId);
 
@@ -462,8 +468,6 @@
     }
 
     function updateDiffs() {
-        saveWorkingCopy();
-
         let eventId = eventsElement.value;
         let eventData = events[eventId];
 
@@ -472,6 +476,7 @@
         //eventData.workingCopy.subtitle = workingCopySubtitleElement.value;
         eventData.workingCopy.abstract = workingCopyAbstractElement.value;
         eventData.workingCopy.notes = workingCopyNotesElement.value;
+			saveWorkingCopy();
 
 			baseAbstractLengthElement.innerText = eventData.base ? `${eventData.base.abstract.length}/${recommendedAbstractLength}` : `?/${recommendedAbstractLength}`;
 			workingCopyAbstractLengthElement.innerText = eventData.workingCopy ? `${eventData.workingCopy.abstract.length}/${recommendedAbstractLength}` : `?/${recommendedAbstractLength}`;
@@ -518,7 +523,7 @@
         let reader = new FileReader();
 
         reader.onload = (function (fileName, target) {
-            return function(event) {
+				return function (event) {
                 let data = event.target.result;
                 let message, dataKey, nameKey;
 
