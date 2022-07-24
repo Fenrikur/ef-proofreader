@@ -92,6 +92,7 @@
 								class="btn btn-light btn-sm">Copy</button></h6>
                     <p class="card-text">
                         <span id="base-abstract" class="form-control"></span>
+							<small id="base-abstract-length" class="text-muted"></small>
                     </p>
 						<h6>Description: <button id="base-copy" type="button" class="btn btn-light btn-sm">Copy</button>
 						</h6>
@@ -140,6 +141,7 @@
                             <textarea id="workingcopy-abstract" class="form-control"></textarea>
                             <div id="workingcopy-abstract-size" class="form-control textarea-size"></div>
                         </div>
+							<small id="workingcopy-abstract-length" class="text-muted"></small>
                         <p></p>
 							<h6>Description: <button id="workingcopy-copy" type="button"
 									class="btn btn-light btn-sm">Copy</button></h6>
@@ -182,6 +184,7 @@
 								class="btn btn-light btn-sm">Copy</button></h6>
                     <p class="card-text">
                         <span id="remote-abstract" class="form-control"></span>
+							<small id="remote-abstract-length" class="text-muted"></small>
                     </p>
 						<h6>Description: <button id="remote-copy" type="button"
 								class="btn btn-light btn-sm">Copy</button></h6>
@@ -202,6 +205,7 @@
 <script type="text/javascript">
     //TODO: Add unread count & flag
     //TODO: Add automatic, rotating backups (up to X) every U seconds or every V events
+		const recommendedAbstractLength = 300;
 
     let localStorageKeyBaseName = 'ef-events-base-name';
     let localStorageKeyWorkingCopyName = 'ef-events-workingcopy-name';
@@ -238,6 +242,9 @@
     let baseAbstractElement = document.getElementById('base-abstract'),
         workingCopyAbstractElement = document.getElementById('workingcopy-abstract'),
         remoteAbstractElement = document.getElementById('remote-abstract');
+		let baseAbstractLengthElement = document.getElementById('base-abstract-length'),
+			workingCopyAbstractLengthElement = document.getElementById('workingcopy-abstract-length'),
+			remoteAbstractLengthElement = document.getElementById('remote-abstract-length');
     let baseNotesElement = document.getElementById('base-notes'),
         workingCopyNotesElement = document.getElementById('workingcopy-notes'),
         remoteNotesElement = document.getElementById('remote-notes');
@@ -465,6 +472,10 @@
         //eventData.workingCopy.subtitle = workingCopySubtitleElement.value;
         eventData.workingCopy.abstract = workingCopyAbstractElement.value;
         eventData.workingCopy.notes = workingCopyNotesElement.value;
+
+			baseAbstractLengthElement.innerText = eventData.base ? `${eventData.base.abstract.length}/${recommendedAbstractLength}` : `?/${recommendedAbstractLength}`;
+			workingCopyAbstractLengthElement.innerText = eventData.workingCopy ? `${eventData.workingCopy.abstract.length}/${recommendedAbstractLength}` : `?/${recommendedAbstractLength}`;
+			remoteAbstractLengthElement.innerText = eventData.remote ? `${eventData.remote.abstract.length}/${recommendedAbstractLength}` : `?/${recommendedAbstractLength}`;
 
         updateDiff(eventData.base !== null ? eventData.base.description : '', eventData.workingCopy.description, baseElement);
         updateDiff(eventData.base !== null ? eventData.base.title : '', eventData.workingCopy.title, baseTitleElement);
