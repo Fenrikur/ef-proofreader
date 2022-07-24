@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EF-Events Proofreading Tool</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script src="js/diff.js"></script>
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/jquery.csv.js"></script>
+    <style>
+        .textarea-container {
+            position: relative;
+            width: 100%;
+        }
+
+        textarea, .textarea-size, span.form-control {
+            min-height: 5ex;
+        }
+
+        textarea, .textarea-size {
+            overflow: hidden;
+            width: 100%;
+        }
+
+        textarea {
+            height: 100% !important;
+            position: absolute;
+            resize: none;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="header mt-3 mb-2" style="line-height: 5ex;">
+        <form class="form-inline justify-content-center">
+            <label for="events" class="mr-1">Event:</label>
+            <select id="events" class="form-control mr-2"></select>
+            <div class="badge p-0 mr-1" style="width: 10em;">
+                <span class="progress">
+                    <div id="events-current-progress" class="progress-bar progress-bar-striped" role="progressbar"
+                         style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0"></div>
+                </span>
+            </div>
+            <span class="badge badge-primary mr-1">Event <span id="events-current"></span> of <span
+                    id="events-total"></span></span>
+            <span class="badge badge-secondary mr-1"><span id="events-base"></span> events in Base</span>
+            <span class="badge badge-secondary mr-1"><span id="events-remote"></span> events in Remote</span>
+            <span class="badge badge-secondary mr-1"><span id="events-both"></span> events in both</span>
+        </form>
+    </div>
+    <div class="workspace row">
+        <div class="col-xl-4">
+            <div class="card">
+                <div class="card-header">
+                    <small class="text-muted" style="float: right;"><input type="file" id="base-file" /><button type="button" id="base-export">Export CSV</button></small>
+                    <h5>Base</h5>
+                    <small id="base-url" class="text-muted"></small>
+                </div>
+                <div class="card-body">
+                    <h6>Title:</h6>
+                    <h6 id="base-title" class="card-title form-control"></h6>
+                    <p class="card-text">
+                        <small id="base-subtitle" class="text-muted"></small>
+                    </p>
+                    <h6>Abstract:</h6>
+                    <p class="card-text">
+                        <span id="base-abstract" class="form-control"></span>
+                    </p>
+                    <h6>Description:</h6>
+                    <p class="card-text">
+                        <span id="base" class="form-control"></span>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <h6>Notes:</h6>
+                    <p class="card-text">
+                    <span id="base-notes" class="form-control"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <form>
+            <div class="card">
+                    <div class="card-header">
+                        <small class="text-muted" style="float: right;"><input type="file" id="workingcopy-file" /><button type="button" id="workingcopy-export">Export CSV</button></small>
+                        <h5>Working Copy</h5>
+                        <small id="workingcopy-url" class="text-muted">This is yours!</small>
+                    </div>
+                    <div class="card-body">
+                        <h6>Title:</h6>
+                        <div id="workingcopy-title-container" class="textarea-container">
+                            <textarea id="workingcopy-title" class="form-control"></textarea>
+                            <div id="workingcopy-title-size" class="form-control textarea-size"></div>
+                        </div>
+                        <p></p>
+                        <!--<h6>Subtitle:</h6>
+                        <input id="workingcopy-subtitle" class="form-control text-muted w-100"/>
+                        <p></p>-->
+                        <h6>Abstract:</h6>
+                        <div id="workingcopy-abstract-container" class="textarea-container">
+                            <textarea id="workingcopy-abstract" class="form-control"></textarea>
+                            <div id="workingcopy-abstract-size" class="form-control textarea-size"></div>
+                        </div>
+                        <p></p>
+                        <h6>Description:</h6>
+                        <div id="workingcopy-container" class="textarea-container">
+                            <textarea id="workingcopy" class="form-control"></textarea>
+                            <div id="workingcopy-size" class="form-control textarea-size"></div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <h6>Notes:</h6>
+                        <div id="workingcopy-notes-container" class="textarea-container">
+                            <textarea id="workingcopy-notes" class="form-control"></textarea>
+                            <div id="workingcopy-notes-size" class="textarea-size form-control"></div>
+                        </div>
+                    </div>
+            </div>
+            </form>
+        </div>
+        <div class="col-xl-4">
+            <div class="card">
+                <div class="card-header">
+                    <small class="text-muted" style="float: right;"><input type="file" id="remote-file" /><button type="button" id="remote-export">Export CSV</button></small>
+                    <h5>Remote</h5>
+                    <small id="remote-url" class="text-muted"></small>
+                </div>
+                <div class="card-body">
+                    <h6>Title:</h6>
+                    <h6 id="remote-title" class="card-title form-control"></h6>
+                    <p class="card-text">
+                        <small id="remote-subtitle" class="text-muted"></small>
+                    </p>
+                    <h6>Abstract:</h6>
+                    <p class="card-text">
+                        <span id="remote-abstract" class="form-control"></span>
+                    </p>
+                    <h6>Description:</h6>
+                    <p class="card-text">
+                        <span id="remote" class="form-control"></span>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <h6>Notes:</h6>
+                    <p class="card-text">
+                    <span id="remote-notes" class="form-control"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    //TODO: Add unread count & flag
+    //TODO: Add automatic, rotating backups (up to X) every U seconds or every V events
+
+    let localStorageKeyBaseName = 'ef-events-base-name';
+    let localStorageKeyWorkingCopyName = 'ef-events-workingcopy-name';
+    let localStorageKeyRemoteName = 'ef-events-remote-name';
+    let localStorageKeyBase = 'ef-events-base';
+    let localStorageKeyWorkingCopy = 'ef-events-workingcopy';
+    let localStorageKeyRemote = 'ef-events-remote';
+    let localStorageKeyLastViewedEventId = 'last-item';
+
+    let eventsElement = document.getElementById('events'),
+        eventsCurrentElement = document.getElementById('events-current'),
+        eventsCurrentProgressElement = document.getElementById('events-current-progress'),
+        eventsTotalElement = document.getElementById('events-total'),
+        eventsBaseElement = document.getElementById('events-base'),
+        eventsRemoteElement = document.getElementById('events-remote'),
+        eventsBothElement = document.getElementById('events-both');
+    let baseUrlElement = document.getElementById('base-url'),
+        remoteUrlElement = document.getElementById('remote-url');
+    let baseFileElement = document.getElementById('base-file'),
+        workingCopyFileElement = document.getElementById('workingcopy-file'),
+        remoteFileElement = document.getElementById('remote-file');
+    let baseExportElement = document.getElementById('base-export'),
+        workingCopyExportElement = document.getElementById('workingcopy-export'),
+        remoteExportElement = document.getElementById('remote-export');
+    let baseElement = document.getElementById('base'),
+        workingCopyElement = document.getElementById('workingcopy'),
+        remoteElement = document.getElementById('remote');
+    let baseTitleElement = document.getElementById('base-title'),
+        workingCopyTitleElement = document.getElementById('workingcopy-title'),
+        remoteTitleElement = document.getElementById('remote-title');
+    let baseSubtitleElement = document.getElementById('base-subtitle'),
+        //workingCopySubtitleElement = document.getElementById('workingcopy-subtitle'),
+        remoteSubtitleElement = document.getElementById('remote-subtitle');
+    let baseAbstractElement = document.getElementById('base-abstract'),
+        workingCopyAbstractElement = document.getElementById('workingcopy-abstract'),
+        remoteAbstractElement = document.getElementById('remote-abstract');
+    let baseNotesElement = document.getElementById('base-notes'),
+        workingCopyNotesElement = document.getElementById('workingcopy-notes'),
+        remoteNotesElement = document.getElementById('remote-notes');
+
+    let eventIds = [];
+    let events = [];
+
+    function processBase(data) {
+        let csv = $.csv.toObjects(data);
+        for (let row in csv) {
+            let event = csv[row];
+            let eventId = event.event_id;
+            events[eventId] = {'base': event, 'workingCopy': Object.assign({}, event), 'remote': null};
+            eventIds.push(eventId);
+            console.log('Adding event from base:', eventId);
+        }
+    }
+
+    function processRemote(data) {
+        let csv = $.csv.toObjects(data);
+        for (let row in csv) {
+            let event = csv[row];
+            let eventId = event.event_id;
+            if (typeof events[eventId] !== 'undefined') {
+                events[eventId].remote = event;
+            } else {
+                events[eventId] = {'base': null, 'workingCopy': Object.assign({}, event), 'remote': event};
+                eventIds.push(eventId);
+                console.log('Adding event from remote:', eventId);
+            }
+        }
+    }
+
+    function processWorkingCopy(data) {
+        let csv = $.csv.toObjects(data);
+        for (let row in csv) {
+            let event = csv[row];
+            let eventId = event.event_id;
+            if (typeof events[eventId] !== 'undefined') {
+                events[eventId].workingCopy = event;
+            } else {
+                events[eventId] = {'base': null, 'workingCopy': event, 'remote': null};
+                eventIds.push(eventId);
+                console.log('Adding event from working copy:', eventId);
+            }
+        }
+    }
+
+    function updateEvents() {
+        eventIds.sort(function (a, b) {
+            return a - b;
+        });
+
+        let lastViewedEventId = localStorage.getItem(localStorageKeyLastViewedEventId);
+        let isSelectLastViewed = false;
+
+        removeAllChildNodes(eventsElement);
+
+        for (let row in eventIds) {
+            let eventId = eventIds[row];
+            let event = events[eventId].workingCopy || events[eventId].base || events[eventId].remote;
+            let option = document.createElement('option');
+            option.value = eventId;
+            option.innerText = event['slug'] + ' (' + eventId + ')';
+            eventsElement.appendChild(option);
+
+            if (lastViewedEventId !== null && lastViewedEventId === eventId) {
+                isSelectLastViewed = true;
+            }
+        }
+
+        if (isSelectLastViewed) {
+            eventsElement.value = lastViewedEventId;
+        }
+
+        updateStatistics();
+    }
+
+    function updateStatistics() {
+        var eventBaseCount = 0;
+        let eventRemoteCount = 0;
+        let eventBothCount = 0;
+
+        for (let row in events) {
+            let event = events[row];
+
+            if (event.base !== null) {
+                eventBaseCount++;
+            }
+
+            if (event.remote !== null) {
+                eventRemoteCount++;
+            }
+
+            if (event.base !== null && event.remote !== null) {
+                eventBothCount++;
+            }
+        }
+
+        eventsBaseElement.innerText = eventBaseCount.toString();
+        eventsRemoteElement.innerText = eventRemoteCount.toString();
+        eventsBothElement.innerText = eventBothCount.toString();
+
+        eventsCurrentProgressElement.setAttribute('aria-valuemax', eventIds.length);
+    }
+
+    function loadCsvFiles() {
+        eventIds = [];
+        events = [];
+
+        let baseData = localStorage.getItem(localStorageKeyBase);
+        if (baseData) {
+            processBase(baseData);
+            baseUrlElement.innerHTML = localStorage.getItem(localStorageKeyBaseName);
+        }
+
+        let remoteData = localStorage.getItem(localStorageKeyRemote);
+        if (remoteData) {
+            processRemote(remoteData);
+            remoteUrlElement.innerHTML = localStorage.getItem(localStorageKeyRemoteName);
+        }
+
+        let workingCopyData = localStorage.getItem(localStorageKeyWorkingCopy);
+        if (workingCopyData) {
+            processWorkingCopy(workingCopyData);
+        }
+
+        updateEvents();
+        eventChanged();
+    }
+
+    function removeAllChildNodes(target) {
+        while (target.lastChild) {
+            target.removeChild(target.lastChild);
+        }
+    }
+
+    function updateDiff(self, other, target) {
+        if (typeof self !== 'string' || typeof other !== 'string') {
+            return;
+        }
+
+        let diff = JsDiff.diffWordsWithSpace(
+            self.replace(/[ \t]*\r?\n/g, '\n'),
+            other.replace(/[ \t]*\r?\n/g, '\n'));
+        let fragment = document.createDocumentFragment(), span = null;
+
+        diff.forEach(function (part) {
+            // green for additions, red for deletions
+            // grey for common parts
+            color = part.added ? 'green' :
+                part.removed ? 'red' : 'grey';
+            span = document.createElement('span');
+            span.style.color = color;
+            if (part.added) {
+                span.style.backgroundColor = 'lightgreen';
+            } else if (part.removed) {
+                span.style.backgroundColor = 'lightpink';
+            }
+            span.appendChild(document
+                .createTextNode(part.value));
+            span.innerHTML = span.innerHTML.replace(/\n/g, '&ldsh;<br>');
+            fragment.appendChild(span);
+        });
+
+        removeAllChildNodes(target);
+        target.appendChild(fragment);
+    }
+
+    function eventChanged() {
+        let eventId = eventsElement.value;
+        let eventData = events[eventId];
+
+        if (!eventId || !eventData) {
+            return;
+        }
+
+        workingCopyElement.value = eventData.workingCopy.description;
+        workingCopyTitleElement.value = eventData.workingCopy.title;
+        //workingCopySubtitleElement.value = eventData.workingCopy.subtitle;
+        workingCopyAbstractElement.value = eventData.workingCopy.abstract;
+        workingCopyNotesElement.value = eventData.workingCopy.notes || "";
+
+        autoSize({'target': workingCopyTitleElement});
+        autoSize({'target': workingCopyElement});
+        autoSize({'target': workingCopyAbstractElement});
+        autoSize({'target': workingCopyNotesElement});
+
+        localStorage.setItem(localStorageKeyLastViewedEventId, eventId);
+
+        /*
+            <div class="progress d-inline-block">
+                <div id="events-current-progress" class="progress-bar progress-bar-striped" role="progressbar"
+                     style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0"></div>
+            </div>
+         */
+        eventsCurrentProgressElement.setAttribute('aria-valuenow', eventsElement.selectedIndex + 1);
+        eventsCurrentProgressElement.style.width = ((eventsElement.selectedIndex + 1.0) / eventIds.length) * 100 + '%';
+        eventsCurrentElement.innerText = eventsElement.selectedIndex + 1;
+        eventsTotalElement.innerText = eventIds.length.toString();
+
+        updateDiffs();
+    }
+
+    function updateDiffs() {
+        saveWorkingCopy();
+
+        let eventId = eventsElement.value;
+        let eventData = events[eventId];
+
+        eventData.workingCopy.description = workingCopyElement.value;
+        eventData.workingCopy.title = workingCopyTitleElement.value;
+        //eventData.workingCopy.subtitle = workingCopySubtitleElement.value;
+        eventData.workingCopy.abstract = workingCopyAbstractElement.value;
+        eventData.workingCopy.notes = workingCopyNotesElement.value;
+
+        updateDiff(eventData.base !== null ? eventData.base.description : '', eventData.workingCopy.description, baseElement);
+        updateDiff(eventData.base !== null ? eventData.base.title : '', eventData.workingCopy.title, baseTitleElement);
+        updateDiff(eventData.base !== null ? eventData.base.subtitle : '', eventData.workingCopy.subtitle, baseSubtitleElement);
+        updateDiff(eventData.base !== null ? eventData.base.abstract : '', eventData.workingCopy.abstract, baseAbstractElement);
+        updateDiff(eventData.base !== null ? eventData.base.notes : '', eventData.workingCopy.notes, baseNotesElement);
+
+        updateDiff(eventData.remote !== null ? eventData.remote.description : '', eventData.workingCopy.description, remoteElement);
+        updateDiff(eventData.remote !== null ? eventData.remote.title : '', eventData.workingCopy.title, remoteTitleElement);
+        updateDiff(eventData.remote !== null ? eventData.remote.subtitle : '', eventData.workingCopy.subtitle, remoteSubtitleElement);
+        updateDiff(eventData.remote !== null ? eventData.remote.abstract : '', workingCopyAbstractElement.value, remoteAbstractElement);
+        updateDiff(eventData.remote !== null ? eventData.remote.notes : '', eventData.workingCopy.notes, remoteNotesElement);
+    }
+
+    function saveWorkingCopy() {
+        let workingCopyEvents = [];
+
+        for (let row in events) {
+            let eventData = events[row];
+            if (eventData.workingCopy !== null) {
+                workingCopyEvents.push(eventData.workingCopy);
+            }
+        }
+
+        localStorage.setItem(localStorageKeyWorkingCopy, $.csv.fromObjects(workingCopyEvents));
+    }
+
+    function autoSize(event) {
+        document.getElementById(event.target.id + '-size').innerHTML = (event.target.value + '\n').replace(/\n/g, '<br>');
+    };
+
+    function handleFileSelect(event) {
+        console.log("File selected!", event);
+
+        if (!event.target.files || event.target.files.length !== 1) {
+            return;
+        }
+
+        let file = event.target.files[0];
+        let reader = new FileReader();
+
+        reader.onload = (function (fileName, target) {
+            return function(event) {
+                let data = event.target.result;
+                let message, dataKey, nameKey;
+
+                switch (target) {
+                    case "base-file":
+                        message = "This will overwrite your current BASE data. Do you wish to proceed?";
+                        dataKey = localStorageKeyBase;
+                        nameKey = localStorageKeyBaseName;
+                        break;
+                    case "workingcopy-file":
+                        message = "This will overwrite your current WORKING COPY! Do you wish to proceed? (You better have a backup...)";
+                        dataKey = localStorageKeyWorkingCopy;
+                        nameKey = localStorageKeyWorkingCopyName;
+                        break;
+                    case "remote-file":
+                        message = "This will overwrite your current REMOTE data. Do you wish to proceed?";
+                        dataKey = localStorageKeyRemote;
+                        nameKey = localStorageKeyRemoteName;
+                        break;
+                    default:
+                        return;
+                }
+
+                if (window.confirm(message)) {
+                    localStorage.setItem(dataKey, data);
+                    localStorage.setItem(nameKey, fileName);
+
+                    document.getElementById(target).value = "";
+
+                    loadCsvFiles();
+                }
+            }
+        })(file.name, event.target.id);
+
+        reader.readAsText(file);
+    }
+
+    function exportCsv(event) {
+        let fileName, dataKey;
+
+        console.log('Export requested ...', event);
+
+        switch (event.target.id) {
+            case 'base-export':
+                fileName = localStorage.getItem(localStorageKeyBaseName);
+                dataKey = localStorageKeyBase;
+                break;
+            case 'workingcopy-export':
+                const date = new Date();
+                fileName = `ef-events-export.${date.toISOString()}.csv`;
+                dataKey = localStorageKeyWorkingCopy;
+                break;
+            case 'remote-export':
+                fileName = localStorage.getItem(localStorageKeyRemoteName);
+                dataKey = localStorageKeyRemote;
+                break;
+            default:
+                return;
+        }
+
+        console.log(fileName, dataKey);
+
+        const data = localStorage.getItem(dataKey);
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(data));
+        element.setAttribute('download', fileName);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+
+    eventsElement.onchange = eventChanged;
+    workingCopyElement.onkeyup = updateDiffs;
+    workingCopyTitleElement.onkeyup = updateDiffs;
+    //workingCopySubtitleElement.onkeyup = updateDiffs;
+    workingCopyAbstractElement.onkeyup = updateDiffs;
+    workingCopyNotesElement.onkeyup = updateDiffs;
+
+    workingCopyElement.oninput = autoSize;
+    workingCopyAbstractElement.oninput = autoSize;
+    workingCopyNotesElement.oninput = autoSize;
+
+    document.onkeydown = function (event) {
+        if (eventIds.size === 0) {
+            return;
+        }
+
+        event = event || window.event;
+
+        let keyCode;
+
+        if (event.key !== undefined) {
+            keyCode = event.key;
+        } else if (event.keyIdentifier !== undefined) {
+            keyCode = event.keyIdentifier;
+        } else if (event.keyCode !== undefined) {
+            keyCode = event.keyCode;
+        }
+
+        let currentIndex = eventsElement.selectedIndex;
+        switch (keyCode) {
+            case 0:
+            case 'Space':
+                if (event.ctrlKey) {
+                    eventsElement.selectedIndex = currentIndex + 1 === eventsElement.options.length ? 0 : currentIndex + 1;
+                    eventChanged();
+                }
+            case 38:
+            case 'ArrowUp':
+            case 39:
+            case 'ArrowRight':
+                if (event.ctrlKey && event.altKey) {
+                    eventsElement.selectedIndex = currentIndex + 1 === eventsElement.options.length ? 0 : currentIndex + 1;
+                    eventChanged();
+                }
+                break;
+            case 40:
+            case 'ArrowDown':
+            case 37:
+            case 'ArrowLeft':
+                if (event.ctrlKey && event.altKey) {
+                    eventsElement.selectedIndex = currentIndex - 1 < 0 ? eventsElement.options.length - 1 : currentIndex - 1;
+                    eventChanged();
+                }
+                break;
+        }
+    };
+
+    baseFileElement.addEventListener('change', handleFileSelect, false);
+    workingCopyFileElement.addEventListener('change', handleFileSelect, false);
+    remoteFileElement.addEventListener('change', handleFileSelect, false);
+
+    baseExportElement.addEventListener('click', exportCsv, false);
+    workingCopyExportElement.addEventListener('click', exportCsv, false);
+    remoteExportElement.addEventListener('click', exportCsv, false);
+
+    loadCsvFiles();
+</script>
+</body>
+</html>
