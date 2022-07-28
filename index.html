@@ -72,6 +72,7 @@
 				<div class="card">
 					<div class="card-header">
 						<small class="text-muted" style="float: right;">
+							<button id="base-full-copy" type="button" class="btn btn-light btn-sm">Copy</button>
 							<label for="base-file" class="btn btn-warning btn-sm mb-0">Choose File</label>
 							<input type="file" id="base-file" class="d-none" />
 							<button type="button" id="base-export" class="btn btn-success btn-sm">Export CSV</button>
@@ -82,19 +83,20 @@
 						</div>
 					</div>
 					<div class="card-body">
-						<h6>Title: <button id="base-title-copy" type="button" class="btn btn-light btn-sm" tabindex="-1">Copy</button>
+						<h6>Title: <button id="base-title-copy" type="button" class="btn btn-light btn-sm">Copy</button>
 						</h6>
 						<h6 id="base-title" class="card-title form-control"></h6>
 						<p class="card-text">
 							<small id="base-subtitle" class="text-muted"></small>
 						</p>
 						<h6>Abstract: <button id="base-abstract-copy" type="button"
-								class="btn btn-light btn-sm" tabindex="-1">Copy</button></h6>
+								class="btn btn-light btn-sm">Copy</button></h6>
 						<p class="card-text">
 							<span id="base-abstract" class="form-control"></span>
 							<small id="base-abstract-length" class="text-muted"></small>
 						</p>
-						<h6>Description: <button id="base-copy" type="button" class="btn btn-light btn-sm" tabindex="-1">Copy</button>
+						<h6>Description: <button id="base-text-copy" type="button"
+								class="btn btn-light btn-sm">Copy</button>
 						</h6>
 						<p class="card-text">
 							<span id="base" class="form-control"></span>
@@ -107,31 +109,32 @@
 						</p>
 					</div>
 					<div class="card-footer">
-						<h6>Metadata:</h6>
+						<h6>Metadata: <button id="base-metadata-copy" type="button"
+								class="btn btn-light btn-sm">Copy</button></h6>
 						<p class="card-text">
 						<table class="table table-condensed">
 							<tr>
-								<th>event_id</th>
+								<th>ID</th>
 								<td id="base-event-id"></td>
 							</tr>
 							<tr>
-								<th>conference_day</th>
+								<th>Day</th>
 								<td id="base-conference-day"></td>
 							</tr>
 							<tr>
-								<th>start_time</th>
+								<th>Start</th>
 								<td id="base-start-time"></td>
 							</tr>
 							<tr>
-								<th>end_time</th>
+								<th>End</th>
 								<td id="base-end-time"></td>
 							</tr>
 							<tr>
-								<th>event_hosts</th>
+								<th>Hosts</th>
 								<td id="base-event-hosts"></td>
 							</tr>
 							<tr>
-								<th>conference_room</th>
+								<th>Room</th>
 								<td id="base-conference-room"></td>
 							</tr>
 						</table>
@@ -156,8 +159,8 @@
 							</div>
 						</div>
 						<div class="card-body">
-							<h6>Title: <button id="workingcopy-title-copy" type="button"
-									class="btn btn-light btn-sm">Copy</button></h6>
+							<h6>Title: <button id="workingcopy-title-copy" type="button" class="btn btn-light btn-sm"
+									tabindex="-1">Copy</button></h6>
 							<div id="workingcopy-title-container" class="textarea-container">
 								<textarea id="workingcopy-title" class="form-control"></textarea>
 								<div id="workingcopy-title-size" class="form-control textarea-size"></div>
@@ -167,15 +170,15 @@
 						<input id="workingcopy-subtitle" class="form-control text-muted w-100"/>
 						<p></p>-->
 							<h6>Abstract: <button id="workingcopy-abstract-copy" type="button"
-									class="btn btn-light btn-sm">Copy</button></h6>
+									class="btn btn-light btn-sm" tabindex="-1">Copy</button></h6>
 							<div id="workingcopy-abstract-container" class="textarea-container">
 								<textarea id="workingcopy-abstract" class="form-control"></textarea>
 								<div id="workingcopy-abstract-size" class="form-control textarea-size"></div>
 							</div>
 							<small id="workingcopy-abstract-length" class="text-muted"></small>
 							<p></p>
-							<h6>Description: <button id="workingcopy-copy" type="button"
-									class="btn btn-light btn-sm">Copy</button></h6>
+							<h6>Description: <button id="workingcopy-text-copy" type="button"
+									class="btn btn-light btn-sm" tabindex="-1">Copy</button></h6>
 							<div id="workingcopy-container" class="textarea-container">
 								<textarea id="workingcopy" class="form-control"></textarea>
 								<div id="workingcopy-size" class="form-control textarea-size"></div>
@@ -195,6 +198,7 @@
 				<div class="card">
 					<div class="card-header">
 						<small class="text-muted" style="float: right;">
+							<button id="remote-full-copy" type="button" class="btn btn-light btn-sm">Copy</button>
 							<label for="remote-file" class="btn btn-warning btn-sm mb-0">Choose File</label>
 							<input type="file" id="remote-file" class="d-none" />
 							<button type="button" id="remote-export" class="btn btn-success btn-sm">Export CSV</button>
@@ -217,7 +221,7 @@
 							<span id="remote-abstract" class="form-control"></span>
 							<small id="remote-abstract-length" class="text-muted"></small>
 						</p>
-						<h6>Description: <button id="remote-copy" type="button"
+						<h6>Description: <button id="remote-text-copy" type="button"
 								class="btn btn-light btn-sm">Copy</button></h6>
 						<p class="card-text">
 							<span id="remote" class="form-control"></span>
@@ -230,31 +234,32 @@
 						</p>
 					</div>
 					<div class="card-footer">
-						<h6>Metadata:</h6>
+						<h6>Metadata: <button id="remote-metadata-copy" type="button"
+								class="btn btn-light btn-sm">Copy</button></h6>
 						<p class="card-text">
 						<table class="table table-condensed">
 							<tr>
-								<th>event_id</th>
+								<th>ID</th>
 								<td id="remote-event-id"></td>
 							</tr>
 							<tr>
-								<th>conference_day</th>
+								<th>Day</th>
 								<td id="remote-conference-day"></td>
 							</tr>
 							<tr>
-								<th>start_time</th>
+								<th>Start</th>
 								<td id="remote-start-time"></td>
 							</tr>
 							<tr>
-								<th>end_time</th>
+								<th>End</th>
 								<td id="remote-end-time"></td>
 							</tr>
 							<tr>
-								<th>event_hosts</th>
+								<th>Hosts</th>
 								<td id="remote-event-hosts"></td>
 							</tr>
 							<tr>
-								<th>conference_room</th>
+								<th>Room</th>
 								<td id="remote-conference-room"></td>
 							</tr>
 						</table>
@@ -315,13 +320,17 @@
 			buttonNext = document.getElementById('btn-next');
 		let baseTitleCopy = document.getElementById('base-title-copy'),
 			baseAbstractCopy = document.getElementById('base-abstract-copy'),
-			baseCopy = document.getElementById('base-copy');
+			baseTextCopy = document.getElementById('base-text-copy'),
+			baseMetadataCopy = document.getElementById('base-metadata-copy'),
+			baseFullCopy = document.getElementById('base-full-copy');
 		let workingCopyTitleCopy = document.getElementById('workingcopy-title-copy'),
 			workingCopyAbstractCopy = document.getElementById('workingcopy-abstract-copy'),
-			workingCopyCopy = document.getElementById('workingcopy-copy');
+			workingCopyTextCopy = document.getElementById('workingcopy-text-copy');
 		let remoteTitleCopy = document.getElementById('remote-title-copy'),
 			remoteAbstractCopy = document.getElementById('remote-abstract-copy'),
-			remoteCopy = document.getElementById('remote-copy');
+			remoteTextCopy = document.getElementById('remote-text-copy'),
+			remoteMetadataCopy = document.getElementById('remote-metadata-copy'),
+			remoteFullCopy = document.getElementById('remote-full-copy');
 
 		let baseEventID = document.getElementById('base-event-id'),
 			baseConferenceDay = document.getElementById('base-conference-day'),
@@ -544,7 +553,7 @@
 				baseConferenceDay.innerText = `${eventData.base.conference_day} (${eventData.base.conference_day_name})`;
 				baseStartTime.innerText = eventData.base.start_time;
 				baseEndTime.innerText = eventData.base.end_time;
-				baseEventHosts.innerText = eventData.base.event_hosts;
+				baseEventHosts.innerText = eventData.base.pannel_hosts;
 				baseConferenceRoom.innerText = eventData.base.conference_room;
 			}
 			if (eventData.remote) {
@@ -552,7 +561,7 @@
 				remoteConferenceDay.innerText = `${eventData.remote.conference_day} (${eventData.remote.conference_day_name})`;
 				remoteStartTime.innerText = eventData.remote.start_time;
 				remoteEndTime.innerText = eventData.remote.end_time;
-				remoteEventHosts.innerText = eventData.remote.event_hosts;
+				remoteEventHosts.innerText = eventData.remote.pannel_hosts;
 				remoteConferenceRoom.innerText = eventData.remote.conference_room;
 			}
 
@@ -709,10 +718,23 @@
 			eventChanged();
 		}
 
-		function copyEventDataToClipboard(file, field) {
+		function getMetadataText(eventData) {
+			return eventData ? `ID: ${eventData.event_id}\nDay: ${eventData.conference_day} (${eventData.conference_day_name})\nStart: ${eventData.start_time}\nEnd: ${eventData.end_time}\nHosts: ${eventData.pannel_hosts}\nRoom: ${eventData.conference_room}` : undefined;
+		}
+
+		function copyEventDataToClipboard(workspace, fieldName) {
 			let eventId = eventsElement.value;
-			let eventData = events[eventId];
-			let text = eventData[file][field];
+			let eventData = events[eventId][workspace];
+			if (!eventData) return;
+
+			let text;
+			if (fieldName === 'metadata') {
+				text = getMetadataText(eventData);
+			} else if (fieldName) {
+				text = eventData[fieldName];
+			} else {
+				text = `Title:\n${eventData.title}\n\nAbstract:\n${eventData.abstract}\n\nDescription:\n${eventData.description}\n\nMetadata:\n${getMetadataText(eventData)}`;
+			}
 			if (text) {
 				copyToClipboard(text);
 			}
@@ -747,13 +769,17 @@
 
 		baseTitleCopy.onclick = copyEventDataToClipboard.bind(null, 'base', 'title');
 		baseAbstractCopy.onclick = copyEventDataToClipboard.bind(null, 'base', 'abstract');
-		baseCopy.onclick = copyEventDataToClipboard.bind(null, 'base', 'description');
+		baseTextCopy.onclick = copyEventDataToClipboard.bind(null, 'base', 'description');
+		baseMetadataCopy.onclick = copyEventDataToClipboard.bind(null, 'base', 'metadata');
+		baseFullCopy.onclick = copyEventDataToClipboard.bind(null, 'base', undefined);
 		workingCopyTitleCopy.onclick = copyEventDataToClipboard.bind(null, 'workingCopy', 'title');
 		workingCopyAbstractCopy.onclick = copyEventDataToClipboard.bind(null, 'workingCopy', 'abstract');
-		workingCopyCopy.onclick = copyEventDataToClipboard.bind(null, 'workingCopy', 'description');
+		workingCopyTextCopy.onclick = copyEventDataToClipboard.bind(null, 'workingCopy', 'description');
 		remoteTitleCopy.onclick = copyEventDataToClipboard.bind(null, 'remote', 'title');
 		remoteAbstractCopy.onclick = copyEventDataToClipboard.bind(null, 'remote', 'abstract');
-		remoteCopy.onclick = copyEventDataToClipboard.bind(null, 'remote', 'description');
+		remoteTextCopy.onclick = copyEventDataToClipboard.bind(null, 'remote', 'description');
+		remoteMetadataCopy.onclick = copyEventDataToClipboard.bind(null, 'remote', 'metadata');
+		remoteFullCopy.onclick = copyEventDataToClipboard.bind(null, 'remote', undefined);
 
 		document.onkeydown = function (event) {
 			if (eventIds.size === 0) {
